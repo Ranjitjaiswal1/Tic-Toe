@@ -1,0 +1,7 @@
+{
+  "name": "tic-tac-toe-website",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node ../../server.js"
+  }
+}

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe | Player vs Computer</title>
+    <meta name="description" content="Play Tic Tac Toe against intelligent Computer AI with saved win/loss stats, streak tracking, sound effects, and animations.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Ambient Dynamic Glows -->
+    <div class="ambient-glow glow-1"></div>
+    <div class="ambient-glow glow-2"></div>
+    <div class="ambient-glow glow-3"></div>
+
+    <!-- Celebration Confetti Canvas -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <!-- Header Navigation -->
+    <header>
+        <div class="brand">
+            <div class="brand-icon">🤖✕</div>
+            <div>
+                <h1 class="brand-title">TIC TAC TOE</h1>
+                <p class="brand-subtitle">PLAYER VS COMPUTER</p>
+            </div>
+        </div>
+
+        <div class="header-actions">
+            <div class="storage-badge" title="Game records are automatically saved in your browser">
+                <span class="save-dot"></span> 💾 Auto-Saved
+            </div>
+            <button id="sound-toggle-btn" class="icon-btn" title="Toggle Sound" aria-label="Toggle Sound">
+                <span id="sound-icon">🔊</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Game Container -->
+    <main class="app-container">
+        <!-- AI Difficulty / Mode Tabs -->
+        <nav class="mode-selector" aria-label="Game Mode">
+            <button class="mode-tab active" data-mode="ai-smart" id="tab-ai-smart">
+                <span>🤖</span> Smart Computer
+            </button>
+            <button class="mode-tab" data-mode="ai-hard" id="tab-ai-hard">
+                <span>🧠</span> Unbeatable AI
+            </button>
+            <button class="mode-tab" data-mode="pvp" id="tab-pvp">
+                <span>👥</span> 2 Players
+            </button>
+        </nav>
+
+        <!-- Scoreboard & Players -->
+        <section class="scoreboard" aria-label="Scoreboard">
+            <!-- Player X (You) Card -->
+            <div id="card-player-x" class="player-card player-x active-turn">
+                <div class="player-header">
+                    <span class="player-avatar">👤</span>
+                    <span class="player-badge">X</span>
+                    <span class="player-name" id="label-player-x">You</span>
+                </div>
+                <div id="score-x" class="player-score">0</div>
+                <div class="score-subtext">Wins (Saved)</div>
+                <div class="active-indicator"></div>
+            </div>
+
+            <!-- Ties Counter -->
+            <div class="tie-card">
+                <span class="tie-title">Draws</span>
+                <span id="score-tie" class="tie-score">0</span>
+                <span class="score-subtext">Ties</span>
+            </div>
+
+            <!-- Player O (Computer) Card -->
+            <div id="card-player-o" class="player-card player-o">
+                <div class="player-header">
+                    <span class="player-avatar">🤖</span>
+                    <span class="player-badge">O</span>
+                    <span id="label-player-o" class="player-name">Computer</span>
+                </div>
+                <div id="score-o" class="player-score">0</div>
+                <div class="score-subtext">Wins (Saved)</div>
+                <div class="active-indicator"></div>
+            </div>
+        </section>
+
+        <!-- Status Indicator Pill -->
+        <div class="status-pill">
+            <div id="status-dot" class="status-dot"></div>
+            <span id="status-text">Your Turn (X)</span>
+        </div>
+
+        <!-- Tic Tac Toe Board -->
+        <div class="board-wrapper">
+            <div id="strike-line" class="strike-line"></div>
+            <div id="game-board" class="game-board" role="grid" aria-label="Tic Tac Toe 3x3 Grid">
+                <button class="tile" data-index="0" aria-label="Tile 1, row 1 column 1"></button>
+                <button class="tile" data-index="1" aria-label="Tile 2, row 1 column 2"></button>
+                <button class="tile" data-index="2" aria-label="Tile 3, row 1 column 3"></button>
+                <button class="tile" data-index="3" aria-label="Tile 4, row 2 column 1"></button>
+                <button class="tile" data-index="4" aria-label="Tile 5, row 2 column 2"></button>
+                <button class="tile" data-index="5" aria-label="Tile 6, row 2 column 3"></button>
+                <button class="tile" data-index="6" aria-label="Tile 7, row 3 column 1"></button>
+                <button class="tile" data-index="7" aria-label="Tile 8, row 3 column 2"></button>
+                <button class="tile" data-index="8" aria-label="Tile 9, row 3 column 3"></button>
+            </div>
+        </div>
+
+        <!-- Controls Bar -->
+        <footer class="controls-bar">
+            <button id="reset-round-btn" class="btn btn-primary" title="Play next round (Shortcut: R)">
+                <span>🔄</span> Next Round
+            </button>
+            <button id="reset-scores-btn" class="btn btn-secondary" title="Clear all saved stats from browser">
+                <span>🗑️</span> Reset Saved Data
+            </button>
+        </footer>
+
+        <!-- Detailed Analytics & Saved Data Card -->
+        <section class="stats-card" aria-label="Saved Game Statistics">
+            <div class="stats-header">
+                <div class="stats-title-box">
+                    <span class="stats-icon">📊</span>
+                    <span class="stats-title">Saved Performance Stats</span>
+                </div>
+                <span id="streak-badge" class="streak-pill">🔥 Streak: 0</span>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-label">Total Matches</span>
+                    <span id="stat-total-games" class="stat-value">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Your Win Rate</span>
+                    <span id="stat-win-rate" class="stat-value">0%</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Best Streak</span>
+                    <span id="stat-best-streak" class="stat-value">0</span>
+                </div>
+            </div>
+
+            <!-- Recent Match History -->
+            <div class="history-section">
+                <div class="history-title">Recent Matches Log</div>
+                <div id="history-list" class="history-list">
+                    <div class="history-empty">No games played yet. Play your first round against Computer!</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Celebration & Result Modal -->
+    <div id="result-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-card">
+            <div class="modal-gif-box">
+                <img src="giphy.gif" alt="Celebration animation">
+            </div>
+            <h2 id="modal-title" class="modal-title">You Won!</h2>
+            <p id="modal-subtitle" class="modal-subtitle">Data saved permanently in your browser.</p>
+            <div class="modal-actions">
+                <button id="modal-play-again-btn" class="btn btn-primary">
+                    <span>🎮</span> Play Next Round
+                </button>
+                <button id="modal-close-btn" class="btn btn-secondary">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Scripts -->
+    <script src="script.js"></script>
+</body>
+</html>
